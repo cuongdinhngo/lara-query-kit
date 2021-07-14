@@ -65,15 +65,110 @@ trait QueryKit
      *
      * @return mixed
      */
-    public function scopeExcept($query, array $columns = [])
+    public function scopeExclude($query, array $columns = [])
     {
-        $select = ['*'];
-        if ($columns && empty($this->except)) {
+        if (empty($this->getExcludable()) && empty($columns)) {
+            throw new \Exception('Too few arguments');
+        }
+        if ($columns && empty($this->getExcludable())) {
             $select = array_diff($this->getTableColumns(), $columns);
         }
-        if ($this->except && empty($columns)) {
-            $select = array_diff($this->getTableColumns(), $this->except);
+        if ($this->getExcludable() && empty($columns)) {
+            $select = array_diff($this->getTableColumns(), $this->getExcludable());
         }
         return $query->select($select);
+    }
+
+    /**
+     * Set excludable
+     *
+     * @param array $excludable
+     *
+     * @return void
+     */
+    public function setExcludable(array $excludable)
+    {
+        $this->excludable = $excludable;
+    }
+
+    /**
+     * Get excludable
+     *
+     * @return void
+     */
+    public function getExcludable()
+    {
+        return $this->excludable;
+    }
+
+    /**
+     * Set filterable
+     *
+     * @param array $filterable
+     *
+     * @return void
+     */
+    public function setFilterable(array $filterable)
+    {
+        $this->filterable = $filterable;
+    }
+
+    /**
+     * Get filterable
+     *
+     * @return void
+     */
+    public function getFilterable()
+    {
+        return $this->filterable;
+    }
+
+    /**
+     * Filter
+     * @param  array  $params Params
+     * @return $this
+     */
+    public function scopeFilter($query, array $params)
+    {
+        if (empty($this->getFilterable())) {
+            throw new \Exception('Empty Filterable');
+        }
+
+        if (!is_array($this->getFilterable())) {
+            throw new \Exception('Invalid Filterable');
+        }
+
+        $query = $this->prepareFilterable($query, $params);
+
+        return $query;
+    }
+
+    /**
+     * Prepare filterable
+     * @param  array  $params Params
+     * @return array
+     */
+    public function prepareFilterable($query, array $params)
+    {
+        $default = ['where', null, null];
+        foreach ($params as $key => $value) {
+            if (false === isset($this->filterable[$key]) && false === in_array($key, $this->filterable)) {
+                continue;
+            }
+
+            list($whereClause, $operator, $likeSyntax) = in_array($key, $this->filterable) ? $default : array_replace($default, $this->filterable[$key]);
+            if ($likeSyntax) {
+                $value = str_replace('{'.$key.'}', $value, $likeSyntax);
+            }
+
+            if ($operator) {
+                $query->$whereClause($key, $operator, $value);
+                continue;
+            }
+
+            $query->$whereClause($key, $value);
+        }
+
+        return $query;
     }
 }
