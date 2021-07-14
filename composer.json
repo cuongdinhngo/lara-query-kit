@@ -18,7 +18,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Cuongnd88\\LaraGuardian\\": "src/"
+            "Cuongnd88\\LaraQueryKit\\": "src/"
         }
     },
     "extra": {

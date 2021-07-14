@@ -1,6 +1,6 @@
 <?php
 
-namespace Cuongnd88\LaraGuardian;
+namespace Cuongnd88\LaraQueryKit;
 
 use Illuminate\Support\ServiceProvider;
 
