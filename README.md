@@ -1,2 +1,3 @@
 # lara-query-kit
-Laravel query kit
+
+Lara Query Kit utilizes the Eloquent model

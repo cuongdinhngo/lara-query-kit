@@ -1,0 +1,31 @@
+{
+    "name": "cuongnd88/lara-query-kit",
+    "description": "Lara Query Kit utilizes the Eloquent model",
+    "keywords": [
+        "laravel",
+        "query",
+        "upsert",
+        "eloquent",
+        "model"
+    ],
+    "homepage": "https://github.com/cuongnd88/lara-query-kit",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ngo Dinh Cuong",
+            "email": "dinhcuongngo@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Cuongnd88\\LaraGuardian\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Cuongnd88\\LaraQueryKit\\LaraQueryKitServiceProvider"
+            ]
+        }
+    }
+}
