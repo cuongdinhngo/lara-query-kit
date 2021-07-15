@@ -80,18 +80,6 @@ trait QueryKit
     }
 
     /**
-     * Set excludable
-     *
-     * @param array $excludable
-     *
-     * @return void
-     */
-    public function setExcludable(array $excludable)
-    {
-        $this->excludable = $excludable;
-    }
-
-    /**
      * Get excludable
      *
      * @return void
@@ -102,15 +90,17 @@ trait QueryKit
     }
 
     /**
-     * Set filterable
+     * Set filterable conditions
      *
+     * @param [type] $query
      * @param array $filterable
      *
-     * @return void
+     * @return mixed
      */
-    public function setFilterable(array $filterable)
+    public function scopeFilterableCondition($query, array $filterable)
     {
         $this->filterable = $filterable;
+        return $this;
     }
 
     /**
@@ -168,6 +158,53 @@ trait QueryKit
 
             $query->$whereClause($key, $value);
         }
+        return $query;
+    }
+
+    /**
+     * Set searchable columns
+     *
+     * @param [type] $query
+     * @param array $cols
+     *
+     * @return void
+     */
+    public function scopeSearchableCols($query, array $cols)
+    {
+        $this->searchable = $cols;
+        return $this;
+    }
+
+    /**
+     * Get searchable columns
+     *
+     * @return array
+     */
+    public function getSearchable()
+    {
+        return $this->searchable;
+    }
+
+    /**
+     * Search full-text
+     *
+     * @param [type] $query
+     * @param [type] $value
+     * @param [type] $mode
+     *
+     * @return void
+     */
+    public function scopeSearchFulltext($query, $value, $mode = NATURAL_LANGUAGE)
+    {
+        if (empty($this->getSearchable())) {
+            throw new \Exception('Need Match Columns');
+        }
+
+        if (!is_array($this->getSearchable())) {
+            throw new \Exception('Invalid Searchable');
+        }
+
+        $query->whereRaw("MATCH (".implode(" ,", $this->getSearchable()).") AGAINST (? {$mode})", [$value]);
 
         return $query;
     }

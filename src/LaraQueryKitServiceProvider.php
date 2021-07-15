@@ -24,7 +24,7 @@ class LaraQueryKitServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/Traits' => app_path(),
+            __DIR__.'/Traits' => app_path('Traits'),
         ], 'app');
     }
 }
