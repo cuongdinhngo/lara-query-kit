@@ -53,8 +53,10 @@ trait QueryKit
      *
      * @return mixed
      */
-    public function getTableColumns() {
-        return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
+    public static function getTableColumns()
+    {
+        $model = new static;
+        return $model->getConnection()->getSchemaBuilder()->getColumnListing($model->getTable());
     }
 
     /**
@@ -141,18 +143,25 @@ trait QueryKit
     public function prepareFilterable($query, array $params)
     {
         $default = ['where', null, null];
+        $singleArg = ['whereNull', 'whereNotNull', 'orWhereNull', 'orWhereNotNull'];
         foreach ($params as $key => $value) {
             if (false === isset($this->filterable[$key]) && false === in_array($key, $this->filterable)) {
                 continue;
             }
 
             list($whereClause, $operator, $likeSyntax) = in_array($key, $this->filterable) ? $default : array_replace($default, $this->filterable[$key]);
+
             if ($likeSyntax) {
                 $value = str_replace('{'.$key.'}', $value, $likeSyntax);
             }
 
             if ($operator) {
                 $query->$whereClause($key, $operator, $value);
+                continue;
+            }
+
+            if (in_array($whereClause, $singleArg)) {
+                $query->$whereClause($key);
                 continue;
             }
 
