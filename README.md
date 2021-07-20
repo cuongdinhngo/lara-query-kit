@@ -14,6 +14,9 @@ Traits are used to declare methods that can be used in multiple classes. Traits 
 
 Local scopes allow you to define common sets of constraints that you may easily re-use throughout your application. To define a scope, simply prefix an Eloquent model method with `scope`.
 
+
+## Installation & Configuration
+
 1-Install `cuongnd88/lara-query-kit` using Composer.
 
 ```php
